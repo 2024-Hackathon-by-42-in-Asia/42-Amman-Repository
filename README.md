@@ -6,7 +6,7 @@ This project aims to analyze restaurant locations and their proximity to one ano
 The dataset contains detailed information about various restaurants, including their geographical coordinates, ratings, and other relevant attributes. You can download the dataset [here](URL_TO_KAGGLE). 
 
 The data also includes information from the Canadian government, illustrating the relationship between carbon emissions, fuel types, engine sizes, and other relevant factors we have.
-You can download the dataset (URL_TO_KAGGLE).
+You can download the dataset [here](https://www.kaggle.com/datasets/debajyotipodder/co2-emission-by-vehicles).
 
 ## Project Structure
 - **Photos**: Visual representations of restaurants and key locations.
