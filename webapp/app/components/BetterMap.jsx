@@ -7,6 +7,26 @@ import * as turf from '@turf/turf';
 
 const accessToken = '';
 
+const calculate_emissions = (engine_type, fuel_efficiency, distance) => {
+  const fuel_consumed = fuel_efficiency * distance;
+  let emissions = 0.0;
+  if (engine_type === "petrol") {
+    emissions = 2.31 * fuel_consumed;
+  } else if (engine_type === "diesel") {
+    emissions = 2.68 * fuel_consumed;
+  } else if (engine_type === "electric") {
+    emissions = 0.2 * (fuel_consumed / 1000);
+  } else if (engine_type === "hybrid") {
+    const petrol_usage = fuel_consumed * 0.5;
+    const electric_usage = fuel_consumed * 0.5;
+    emissions = (2.31 * petrol_usage) + (0.2 * electric_usage / 1000);
+  } else {
+    console.log("Invalid engine type.");
+    return null;
+  }
+  return emissions;
+};
+
 const MapComponent = () => {
   const [viewport, setViewport] = useState({
     latitude: 1.428627,
@@ -20,6 +40,9 @@ const MapComponent = () => {
   const [closestFirst, setClosestFirst] = useState([]);
   const [combinedRoute, setCombinedRoute] = useState(null);
   const [totalDistance, setTotalDistance] = useState(null);
+  const [engineType, setEngineType] = useState('petrol');  // Default engine type
+  const [fuelEfficiency, setFuelEfficiency] = useState(0.1);  // Fuel efficiency in liters/km
+  const [carbonEmissions, setCarbonEmissions] = useState(null); // Carbon emissions in grams
 
   useEffect(() => {
     const getRoute = async (start, end) => {
@@ -59,16 +82,20 @@ const MapComponent = () => {
           coordinates: combinedCoordinates,
         },
       });
+
+      // Calculate emissions
+      const emissions = calculate_emissions(engineType, fuelEfficiency, totalDistance);
+      setCarbonEmissions(emissions?.toFixed(2));
     };
 
     calculateRoutes();
-  }, [restaurant, customerOne, customerTwo]);
+  }, [restaurant, customerOne, customerTwo, engineType, fuelEfficiency]);
 
   const routeLayerStyle = {
     id: 'combinedRoute',
     type: 'line',
     paint: {
-      'line-color': '#ff0000', 
+      'line-color': '#ff0000',
       'line-width': 4,
     },
   };
@@ -134,9 +161,10 @@ const MapComponent = () => {
         </Source>
       </Map>
 
-      {totalDistance && (
+      {totalDistance && carbonEmissions && (
         <div className="distance-display">
           <h3>Total driving distance for the route: {totalDistance} km</h3>
+          <h3>Expected carbon emissions: {carbonEmissions} grams</h3>
         </div>
       )}
     </div>

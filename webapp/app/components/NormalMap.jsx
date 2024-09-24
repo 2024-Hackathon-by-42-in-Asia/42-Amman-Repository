@@ -7,6 +7,25 @@ import * as turf from '@turf/turf';
 
 const accessToken = '';
 
+const calculate_emissions = (engine_type, fuel_efficiency, distance) => {
+  const fuel_consumed = fuel_efficiency * distance;
+  let emissions = 0.0;
+  if (engine_type === "petrol") {
+    emissions = 2.31 * fuel_consumed;
+  } else if (engine_type === "diesel") {
+    emissions = 2.68 * fuel_consumed;
+  } else if (engine_type === "electric") {
+    emissions = 0.2 * (fuel_consumed / 1000);
+  } else if (engine_type === "hybrid") {
+    const petrol_usage = fuel_consumed * 0.5;
+    const electric_usage = fuel_consumed * 0.5;
+    emissions = (2.31 * petrol_usage) + (0.2 * electric_usage / 1000);
+  } else {
+    console.log("Invalid engine type.");
+    return null;
+  }
+  return emissions;
+};
 const MapComponent = () => {
   const [viewport, setViewport] = useState({
     latitude: 1.428627,
@@ -21,6 +40,10 @@ const MapComponent = () => {
   const [distanceTwo, setDistanceTwo] = useState(null);
   const [routeDataOne, setRouteDataOne] = useState(null);
   const [routeDataTwo, setRouteDataTwo] = useState(null);
+  const [engineType, setEngineType] = useState('petrol');
+  const [fuelEfficiency, setFuelEfficiency] = useState(0.1);
+  const [emissionsOne, setEmissionsOne] = useState(null);
+  const [emissionsTwo, setEmissionsTwo] = useState(null);
 
   useEffect(() => {
     const getRoute = async (start, end, setRouteData, setDistance) => {
@@ -46,6 +69,15 @@ const MapComponent = () => {
     getRoute(restaurant, customerTwo, setRouteDataTwo, setDistanceTwo);
   }, [restaurant, customerOne, customerTwo]);
 
+  useEffect(() => {
+    if (distanceOne && distanceTwo && fuelEfficiency > 0) {
+      const emissionsOne = calculate_emissions(engineType, fuelEfficiency, parseFloat(distanceOne));
+      const emissionsTwo = calculate_emissions(engineType, fuelEfficiency, parseFloat(distanceTwo));
+  
+      setEmissionsOne(emissionsOne.toFixed(2));
+      setEmissionsTwo(emissionsTwo.toFixed(2));
+    }
+  }, [distanceOne, distanceTwo, engineType, fuelEfficiency]);
   const routeLayerStyleOne = {
     id: 'routeOne',
     type: 'line',
@@ -136,6 +168,8 @@ const MapComponent = () => {
         <div className="distance-display">
           <h3>Driving distance between restaurant and Customer One: {distanceOne} km</h3>
           <h3>Driving distance between restaurant and Customer Two: {distanceTwo} km</h3>
+          {emissionsOne && <h3>Carbon footprint for Customer One: {emissionsOne} grams CO2</h3>}
+          {emissionsTwo && <h3>Carbon footprint for Customer Two: {emissionsTwo} grams CO2</h3>}
         </div>
       )}
     </div>
