@@ -3,7 +3,7 @@
 This project aims to analyze restaurant locations and their proximity to one another to optimize shared deliveries. By grouping restaurants based on their geographical location, the goal is to reduce the carbon footprint by improving delivery efficiency.
 
 ## Data Overview
-The dataset contains detailed information about various restaurants, including their geographical coordinates, ratings, and other relevant attributes. You can download the dataset [here]([URL_TO_KAGGLE](https://www.kaggle.com/datasets/hashiromer/all-foodpanda-restaurants
+The dataset contains detailed information about various restaurants, including their geographical coordinates, ratings, and other relevant attributes. You can download the dataset [here](https://www.kaggle.com/datasets/hashiromer/all-foodpanda-restaurants).
 )). 
 
 The data also includes information from the Canadian government, illustrating the relationship between carbon emissions, fuel types, engine sizes, and other relevant factors we have.
